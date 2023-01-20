@@ -58,7 +58,7 @@ int main() {
             double intensity = n.x * lightDir.x + n.y * lightDir.y + n.z * lightDir.z;
             if (intensity > 0) {
                 Triangle const t2{screenCoords[0], screenCoords[1], screenCoords[2]};
-                trianglePlein(t2, zbuffer, image, TGAColor(intensity * 255, intensity * 255, intensity * 255, 255));
+                trianglePlein(t2, monModel.texturesCoord[i], zbuffer, image, texture);
             }
         }
 

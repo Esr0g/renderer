@@ -23,6 +23,6 @@ struct Triangle {
 
 void ligne(Vecteur const &A, Vecteur const &B, TGAImage &image, TGAColor const &color);
 void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color);
-void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, TGAColor const &color);
+void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture);
 
 #endif

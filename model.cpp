@@ -41,10 +41,6 @@ void Model::parseObj(std::string const &path) {
                     ligne = ligne.substr(ligne.find(" ") + 1);
                     vec.y = std::stod(ligne.substr(0, ligne.find(" ")));
 
-                    // On récupère la coordonée z
-                    ligne = ligne.substr(ligne.find(" ") + 1);
-                    vec.z = std::stod(ligne.substr(0, ligne.find(" ")));
-
                     vecteursTextures.push_back(vec);
                 } else if (ligne[0] == 'f' && ligne[1] == ' ') {
                     Triangle triangleMesh{};

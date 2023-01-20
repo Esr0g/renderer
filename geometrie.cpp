@@ -66,7 +66,7 @@ void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color) 
     ligne(triangle.C, triangle.A, image, color);
 }
 
-void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, TGAColor const &color) {
+void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture) {
     // On parcours le rectangle englobant et on test si chaque pixel appartient au triangle
 
     // On récupềre les coordonées minX minY et maxX maxY du triangle
@@ -82,6 +82,8 @@ void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, 
     // On parcours tous le rectangle englobant
     double x{min.x};
     double y{min.y};
+
+    double ABC = ((triangle.A.x * (triangle.B.y - triangle.C.y) + triangle.B.x * (triangle.C.y - triangle.A.y) + triangle.C.x * (triangle.A.y - triangle.B.y)));
 
     while (y < max.y + 1) {
         x = min.x;
@@ -99,7 +101,15 @@ void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, 
 
                 if (zbuffer[int(x) + int(y) * WIDTH] < z) {
                     zbuffer[int(x) + int(y) * WIDTH] = z;
-                    image.set(x, y, color);
+
+                    alpha = alpha / ABC;
+                    beta = beta / ABC;
+                    gamma = gamma / ABC;
+
+                    Vecteur p{};
+                    p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
+                    p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
+                    image.set(x, y, texture.get(p.x, texture.height() - 1 - p.y));
                 }
             }
 
