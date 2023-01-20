@@ -26,16 +26,23 @@ int main() {
             Vecteur worldCoords[3];
 
             Vecteur v1 = t.A;
-            screenCoords[0] = {round((v1.x + 1.) * WIDTH / 2.), round((v1.y + 1.) * HEIGHT / 2.)};
             worldCoords[0] = v1;
+            double c = 5.;
+            v1.x = v1.x / (1 - (v1.z / c));
+            v1.y = v1.y / (1 - (v1.z / c));
+            screenCoords[0] = {round((v1.x + 1.) * WIDTH / 2.), round((v1.y + 1.) * HEIGHT / 2.), v1.z};
 
             Vecteur v2 = t.B;
-            screenCoords[1] = {round((v2.x + 1.) * WIDTH / 2.), round((v2.y + 1.) * HEIGHT / 2.)};
             worldCoords[1] = v2;
+            v2.x = v2.x / (1 - (v2.z / c));
+            v2.y = v2.y / (1 - (v2.z / c));
+            screenCoords[1] = {round((v2.x + 1.) * WIDTH / 2.), round((v2.y + 1.) * HEIGHT / 2.), v2.z};
 
             Vecteur v3 = t.C;
-            screenCoords[2] = {round((v3.x + 1.) * WIDTH / 2.), round((v3.y + 1.) * HEIGHT / 2.)};
             worldCoords[2] = v3;
+            v3.x = v3.x / (1 - (v3.z / c));
+            v3.y = v3.y / (1 - (v3.z / c));
+            screenCoords[2] = {round((v3.x + 1.) * WIDTH / 2.), round((v3.y + 1.) * HEIGHT / 2.), v3.z};
 
             Vecteur v4{
                 worldCoords[2].x - worldCoords[0].x,

@@ -96,20 +96,21 @@ void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, doubl
             double gamma = ((triangle.C.x * (triangle.A.y - y) + triangle.A.x * (y - triangle.C.y) + x * (triangle.C.y - triangle.A.y)));
 
             if (alpha >= -0.01 && beta >= -0.01 && gamma >= -0.01) {
+                alpha = alpha / ABC;
+                beta = beta / ABC;
+                gamma = gamma / ABC;
                 // Utilisation du zbuffer
-                double z = alpha * triangle.A.z + beta * triangle.B.z + gamma * triangle.C.z;
+                double z = gamma * triangle.A.z + alpha * triangle.B.z + beta * triangle.C.z;
 
-                if (zbuffer[int(x) + int(y) * WIDTH] < z) {
-                    zbuffer[int(x) + int(y) * WIDTH] = z;
+                if (x < WIDTH && y < HEIGHT) {
+                    if (zbuffer[int(x) + int(y) * WIDTH] < z) {
+                        zbuffer[int(x) + int(y) * WIDTH] = z;
 
-                    alpha = alpha / ABC;
-                    beta = beta / ABC;
-                    gamma = gamma / ABC;
-
-                    Vecteur p{};
-                    p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
-                    p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
-                    image.set(x, y, texture.get(p.x, texture.height() - 1 - p.y));
+                        Vecteur p{};
+                        p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
+                        p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
+                        image.set(x, y, texture.get(p.x, texture.height() - 1 - p.y));
+                    }
                 }
             }
 
