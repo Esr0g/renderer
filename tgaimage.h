@@ -68,5 +68,6 @@ TGAColor const white = {255, 255, 255};
 TGAColor const red = {255, 0, 0};
 int const HEIGHT = 800;
 int const WIDTH = 800;
+int const DEPTH = 255;
 
 #endif

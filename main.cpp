@@ -1,6 +1,60 @@
 #include "geometrie.h"
+#include "matrice.h"
 #include "model.h"
 #include "tgaimage.h"
+
+void lookat(Vecteur eye, Vecteur center, Vecteur up) {
+    auto matEye = Matrice::createMatFromVec(eye);
+    auto matCenter = Matrice::createMatFromVec(center);
+
+    auto tempz = Matrice::minus(matEye, matCenter);
+    Vecteur z{};
+    z.set(tempz);
+    z.normaliser();
+
+    Vecteur x = Vecteur::cross(up, z);
+    x.normaliser();
+
+    Vecteur y = Vecteur::cross(z, x);
+    y.normaliser();
+
+    auto minv = Matrice::createMatrice(4, 4);
+    auto tr = Matrice::createMatrice(4, 4);
+
+    for (int i = 0; i < 4; i++) {
+        minv[i][i] = 1;
+        tr[i][i] = 1;
+    }
+
+    minv[0][1] = x.x;
+    minv[0][2] = x.y;
+    minv[0][3] = x.z;
+    minv[1][0] = y.x;
+    minv[1][1] = y.y;
+    minv[1][2] = y.z;
+    minv[2][0] = z.x;
+    minv[2][1] = z.y;
+    minv[2][2] = z.z;
+
+    tr[0][3] = -eye.x;
+    tr[1][3] = -eye.y;
+    tr[2][3] = -eye.z;
+
+    auto ModelView = Matrice::mult(minv, tr);
+}
+
+std::vector<std::vector<double>> viewport(int x, int y, int w, int h) {
+    auto m = Matrice::createMatrice(4, 4);
+    m[0][3] = x + w / 2.;
+    m[1][3] = y + h / 2.;
+    m[2][3] = DEPTH / 2.;
+
+    m[0][0] = w / 2.;
+    m[1][1] = h / 2.;
+    m[2][2] = DEPTH / 2.;
+
+    return m;
+}
 
 int main() {
     TGAImage image(WIDTH, HEIGHT, TGAImage::RGB);
@@ -65,7 +119,7 @@ int main() {
             double intensity = n.x * lightDir.x + n.y * lightDir.y + n.z * lightDir.z;
             if (intensity > 0) {
                 Triangle const t2{screenCoords[0], screenCoords[1], screenCoords[2]};
-                trianglePlein(t2, monModel.texturesCoord[i], zbuffer, image, texture);
+                trianglePlein(t2, monModel.texturesCoord[i], zbuffer, image, texture, intensity);
             }
         }
 

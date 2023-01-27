@@ -3,6 +3,7 @@
 void Model::parseObj(std::string const &path) {
     std::vector<Vecteur> vecteursMesh{};
     std::vector<Vecteur> vecteursTextures{};
+    std::vector<Vecteur> vecteursNormales{};
     std::ifstream myfile(path);
     std::string ligne{};
 
@@ -42,6 +43,22 @@ void Model::parseObj(std::string const &path) {
                     vec.y = std::stod(ligne.substr(0, ligne.find(" ")));
 
                     vecteursTextures.push_back(vec);
+                } else if (ligne[0] == 'v' && ligne[1] == 'n' && ligne[2] == ' ') {
+                    Vecteur vec{};
+
+                    // On récupère la coordonée x
+                    ligne = ligne.substr(4);
+                    vec.x = std::stod(ligne.substr(0, ligne.find(" ")));
+
+                    // On récupère la coordonée y
+                    ligne = ligne.substr(ligne.find(" ") + 1);
+                    vec.y = std::stod(ligne.substr(0, ligne.find(" ")));
+
+                    // On récupère la coordonée z
+                    ligne = ligne.substr(ligne.find(" ") + 1);
+                    vec.z = std::stod(ligne.substr(0, ligne.find(" ")));
+
+                    vecteursNormales.push_back(vec);
                 } else if (ligne[0] == 'f' && ligne[1] == ' ') {
                     Triangle triangleMesh{};
                     Triangle triangleTexture{};

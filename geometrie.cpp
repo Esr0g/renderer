@@ -66,7 +66,7 @@ void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color) 
     ligne(triangle.C, triangle.A, image, color);
 }
 
-void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture) {
+void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, double intensity) {
     // On parcours le rectangle englobant et on test si chaque pixel appartient au triangle
 
     // On récupềre les coordonées minX minY et maxX maxY du triangle
@@ -109,7 +109,11 @@ void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, doubl
                         Vecteur p{};
                         p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
                         p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
-                        image.set(x, y, texture.get(p.x, texture.height() - 1 - p.y));
+                        TGAColor color = texture.get(p.x, texture.height() - 1 - p.y);
+                        color.bgra[0] = round(color.bgra[0] * intensity);
+                        color.bgra[1] = round(color.bgra[1] * intensity);
+                        color.bgra[2] = round(color.bgra[2] * intensity);
+                        image.set(x, y, color);
                     }
                 }
             }
@@ -125,6 +129,26 @@ void Vecteur::normaliser() {
     this->x = this->x / norme;
     this->y = this->y / norme;
     this->z = this->z / norme;
+}
+
+void Vecteur::set(std::vector<std::vector<double>> const &mat) {
+    if (mat.size() != 3 || mat[0].size() != 1) {
+        throw std::runtime_error("Erreur crétion de vecteur");
+    }
+
+    this->x = mat[0][0];
+    this->y = mat[1][0];
+    this->z = mat[2][0];
+}
+
+Vecteur Vecteur::cross(Vecteur const &v1, Vecteur const &v2) {
+    Vecteur v{};
+
+    v.x = v1.y * v2.z - v1.z * v2.y;
+    v.y = v1.z * v2.x - v1.x * v2.z;
+    v.z = v1.x * v2.y - v1.y * v2.x;
+
+    return v;
 }
 
 // Vecteur bboxmin{std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
