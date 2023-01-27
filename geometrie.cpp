@@ -125,20 +125,22 @@ void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, doubl
 }
 
 void Vecteur::normaliser() {
-    double norme = sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
+    double norme = this->norm();
     this->x = this->x / norme;
     this->y = this->y / norme;
     this->z = this->z / norme;
 }
 
 void Vecteur::set(std::vector<std::vector<double>> const &mat) {
-    if (mat.size() != 3 || mat[0].size() != 1) {
-        throw std::runtime_error("Erreur crétion de vecteur");
+    if (mat.size() == 3) {
+        this->x = mat[0][0];
+        this->y = mat[1][0];
+        this->z = mat[2][0];
+    } else if (mat.size() == 4) {
+        this->x = round(mat[0][0] / mat[3][0]);
+        this->y = round(mat[1][0] / mat[3][0]);
+        this->z = round(mat[2][0] / mat[3][0]);
     }
-
-    this->x = mat[0][0];
-    this->y = mat[1][0];
-    this->z = mat[2][0];
 }
 
 Vecteur Vecteur::cross(Vecteur const &v1, Vecteur const &v2) {
@@ -149,6 +151,10 @@ Vecteur Vecteur::cross(Vecteur const &v1, Vecteur const &v2) {
     v.z = v1.x * v2.y - v1.y * v2.x;
 
     return v;
+}
+
+double Vecteur::norm() {
+    return sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
 }
 
 // Vecteur bboxmin{std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};

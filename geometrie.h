@@ -15,6 +15,7 @@ struct Vecteur {
    public:
     void set(std::vector<std::vector<double>> const &mat);
     void normaliser();
+    double norm();
     static Vecteur cross(Vecteur const &v1, Vecteur const &v2);
 };
 

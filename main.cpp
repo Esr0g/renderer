@@ -3,7 +3,10 @@
 #include "model.h"
 #include "tgaimage.h"
 
-void lookat(Vecteur eye, Vecteur center, Vecteur up) {
+Vecteur eye{1, 1, 3};
+Vecteur center{0, 0, 0};
+
+std::vector<std::vector<double>> lookat(Vecteur eye, Vecteur center, Vecteur up) {
     auto matEye = Matrice::createMatFromVec(eye);
     auto matCenter = Matrice::createMatFromVec(center);
 
@@ -18,33 +21,31 @@ void lookat(Vecteur eye, Vecteur center, Vecteur up) {
     Vecteur y = Vecteur::cross(z, x);
     y.normaliser();
 
-    auto minv = Matrice::createMatrice(4, 4);
-    auto tr = Matrice::createMatrice(4, 4);
+    auto res = Matrice::createMatrice(4, 4);
 
     for (int i = 0; i < 4; i++) {
-        minv[i][i] = 1;
-        tr[i][i] = 1;
+        res[i][i] = 1;
     }
 
-    minv[0][1] = x.x;
-    minv[0][2] = x.y;
-    minv[0][3] = x.z;
-    minv[1][0] = y.x;
-    minv[1][1] = y.y;
-    minv[1][2] = y.z;
-    minv[2][0] = z.x;
-    minv[2][1] = z.y;
-    minv[2][2] = z.z;
+    res[0][0] = x.x;
+    res[0][1] = x.y;
+    res[0][2] = x.z;
+    res[1][0] = y.x;
+    res[1][1] = y.y;
+    res[1][2] = y.z;
+    res[2][0] = z.x;
+    res[2][1] = z.y;
+    res[2][2] = z.z;
+    res[0][3] = -center.x;
+    res[1][3] = -center.y;
+    res[2][3] = -center.z;
 
-    tr[0][3] = -eye.x;
-    tr[1][3] = -eye.y;
-    tr[2][3] = -eye.z;
-
-    auto ModelView = Matrice::mult(minv, tr);
+    return res;
 }
 
 std::vector<std::vector<double>> viewport(int x, int y, int w, int h) {
     auto m = Matrice::createMatrice(4, 4);
+    m[3][3] = 1;
     m[0][3] = x + w / 2.;
     m[1][3] = y + h / 2.;
     m[2][3] = DEPTH / 2.;
@@ -62,6 +63,26 @@ int main() {
     // On récupère les textures diffuses pour les afficher sur le model
     TGAImage texture{};
     texture.read_tga_file("../obj/african_head/african_head_diffuse.tga");
+
+    auto modelView = lookat(eye, center, Vecteur{0, 1, 0});
+    auto projection = Matrice::createMatrice(4, 4);
+    for (int i = 0; i < 4; i++) {
+        projection[i][i] = 1;
+    }
+
+    auto viewPort = viewport(WIDTH / 8, HEIGHT / 8, WIDTH * 3 / 4, HEIGHT * 3 / 4);
+    auto tmpEye = Matrice::createMatFromVec(eye);
+    auto tmpCenter = Matrice::createMatFromVec(center);
+    auto m1 = Matrice::minus(tmpEye, tmpCenter);
+    Vecteur tmp{};
+    tmp.set(m1);
+
+    projection[3][2] = -1. / tmp.norm();
+
+    Matrice::printMat(projection);
+    Matrice::printMat(modelView);
+    Matrice::printMat(viewPort);
+    Matrice::printMat(Matrice::mult(Matrice::mult(viewPort, projection), modelView));
 
     try {
         Model monModel{};
@@ -81,22 +102,30 @@ int main() {
 
             Vecteur v1 = t.A;
             worldCoords[0] = v1;
-            double c = 5.;
-            v1.x = v1.x / (1 - (v1.z / c));
-            v1.y = v1.y / (1 - (v1.z / c));
-            screenCoords[0] = {round((v1.x + 1.) * WIDTH / 2.), round((v1.y + 1.) * HEIGHT / 2.), v1.z};
+            auto tmpv1 = Matrice::createMatrice(4, 1);
+            tmpv1[0][0] = v1.x;
+            tmpv1[1][0] = v1.y;
+            tmpv1[2][0] = v1.z;
+            tmpv1[3][0] = 1;
+            screenCoords[0].set(Matrice::mult(Matrice::mult(Matrice::mult(viewPort, projection), modelView), tmpv1));
 
             Vecteur v2 = t.B;
             worldCoords[1] = v2;
-            v2.x = v2.x / (1 - (v2.z / c));
-            v2.y = v2.y / (1 - (v2.z / c));
-            screenCoords[1] = {round((v2.x + 1.) * WIDTH / 2.), round((v2.y + 1.) * HEIGHT / 2.), v2.z};
+            auto tmpv2 = Matrice::createMatrice(4, 1);
+            tmpv2[0][0] = v2.x;
+            tmpv2[1][0] = v2.y;
+            tmpv2[2][0] = v2.z;
+            tmpv2[3][0] = 1;
+            screenCoords[1].set(Matrice::mult(Matrice::mult(Matrice::mult(viewPort, projection), modelView), tmpv2));
 
             Vecteur v3 = t.C;
             worldCoords[2] = v3;
-            v3.x = v3.x / (1 - (v3.z / c));
-            v3.y = v3.y / (1 - (v3.z / c));
-            screenCoords[2] = {round((v3.x + 1.) * WIDTH / 2.), round((v3.y + 1.) * HEIGHT / 2.), v3.z};
+            auto tmpv3 = Matrice::createMatrice(4, 1);
+            tmpv3[0][0] = v3.x;
+            tmpv3[1][0] = v3.y;
+            tmpv3[2][0] = v3.z;
+            tmpv3[3][0] = 1;
+            screenCoords[2].set(Matrice::mult(Matrice::mult(Matrice::mult(viewPort, projection), modelView), tmpv3));
 
             Vecteur v4{
                 worldCoords[2].x - worldCoords[0].x,
