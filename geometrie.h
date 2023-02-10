@@ -11,12 +11,19 @@ struct Vecteur {
     double x{};
     double y{};
     double z{};
+    double w{};
 
    public:
     void set(std::vector<std::vector<double>> const &mat);
     void normaliser();
     double norm();
     static Vecteur cross(Vecteur const &v1, Vecteur const &v2);
+};
+
+struct IShader {
+    // virtual ~IShader();
+    virtual std::vector<std::vector<double>> vertex(int iface, char coord) = 0;
+    virtual bool fragment(Vecteur pt, Vecteur bar, TGAColor &color) = 0;
 };
 
 struct Triangle {
@@ -27,6 +34,6 @@ struct Triangle {
 
 void ligne(Vecteur const &A, Vecteur const &B, TGAImage &image, TGAColor const &color);
 void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color);
-void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, double intensity);
+void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, IShader &shader);
 
 #endif

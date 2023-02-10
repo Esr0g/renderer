@@ -66,7 +66,7 @@ void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color) 
     ligne(triangle.C, triangle.A, image, color);
 }
 
-void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, double intensity) {
+void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, IShader &shader) {
     // On parcours le rectangle englobant et on test si chaque pixel appartient au triangle
 
     // On récupềre les coordonées minX minY et maxX maxY du triangle
@@ -100,20 +100,25 @@ void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, doubl
                 beta = beta / ABC;
                 gamma = gamma / ABC;
                 // Utilisation du zbuffer
-                double z = gamma * triangle.A.z + alpha * triangle.B.z + beta * triangle.C.z;
+                double z = beta * triangle.A.z + gamma * triangle.B.z + alpha * triangle.C.z;
 
                 if (x < WIDTH && y < HEIGHT) {
                     if (zbuffer[int(x) + int(y) * WIDTH] < z) {
                         zbuffer[int(x) + int(y) * WIDTH] = z;
 
-                        Vecteur p{};
-                        p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
-                        p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
-                        TGAColor color = texture.get(p.x, texture.height() - 1 - p.y);
-                        color.bgra[0] = round(color.bgra[0] * intensity);
-                        color.bgra[1] = round(color.bgra[1] * intensity);
-                        color.bgra[2] = round(color.bgra[2] * intensity);
-                        image.set(x, y, color);
+                        // Vecteur p{};
+                        // p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
+                        // p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
+                        // TGAColor color = texture.get(p.x, texture.height() - 1 - p.y);
+                        // color.bgra[0] = round(color.bgra[0] * intensity);
+                        // color.bgra[1] = round(color.bgra[1] * intensity);
+                        // color.bgra[2] = round(color.bgra[2] * intensity);
+                        // image.set(x, y, color);
+                        TGAColor color;
+                        bool discard = shader.fragment(Vecteur{x, y, z}, Vecteur{beta, gamma, alpha}, color);
+                        if (!discard) {
+                            image.set(x, y, color);
+                        }
                     }
                 }
             }

@@ -1,17 +1,7 @@
 #include "matrice.h"
 
 std::vector<std::vector<double>> Matrice::createMatrice(int ligne, int colonne) {
-    std::vector<std::vector<double>> mat{};
-
-    for (int i = 0; i < ligne; i++) {
-        std::vector<double> colones{};
-        for (int j = 0; j < colonne; j++) {
-            colones.push_back(0);
-        }
-        mat.push_back(colones);
-    }
-
-    return mat;
+    return std::vector<std::vector<double>>(ligne, std::vector<double>(colonne, 0));
 }
 
 std::vector<std::vector<double>> Matrice::mult(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2) {

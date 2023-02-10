@@ -62,6 +62,7 @@ void Model::parseObj(std::string const &path) {
                 } else if (ligne[0] == 'f' && ligne[1] == ' ') {
                     Triangle triangleMesh{};
                     Triangle triangleTexture{};
+                    Triangle triangleNormale{};
                     ligne = ligne.substr(2);
 
                     // On récupère le premier point
@@ -70,6 +71,9 @@ void Model::parseObj(std::string const &path) {
                     ligne = ligne.substr(ligne.find("/") + 1);
                     int t1 = std::stoi(ligne.substr(0, ligne.find("/"))) - 1;
                     triangleTexture.A = vecteursTextures[t1];
+                    ligne = ligne.substr(ligne.find("/") + 1);
+                    int n1 = std::stoi(ligne) - 1;
+                    triangleNormale.A = vecteursNormales[n1];
 
                     // On récupère le 2è point
                     ligne = ligne.substr(ligne.find(" ") + 1);
@@ -78,6 +82,9 @@ void Model::parseObj(std::string const &path) {
                     ligne = ligne.substr(ligne.find("/") + 1);
                     int t2 = std::stoi(ligne.substr(0, ligne.find("/"))) - 1;
                     triangleTexture.B = vecteursTextures[t2];
+                    ligne = ligne.substr(ligne.find("/") + 1);
+                    int n2 = std::stoi(ligne) - 1;
+                    triangleNormale.B = vecteursNormales[n2];
 
                     // On récupère le 3è point
                     ligne = ligne.substr(ligne.find(" ") + 1);
@@ -86,9 +93,13 @@ void Model::parseObj(std::string const &path) {
                     ligne = ligne.substr(ligne.find("/") + 1);
                     int t3 = std::stoi(ligne.substr(0, ligne.find("/"))) - 1;
                     triangleTexture.C = vecteursTextures[t3];
+                    ligne = ligne.substr(ligne.find("/") + 1);
+                    int n3 = std::stoi(ligne) - 1;
+                    triangleNormale.C = vecteursNormales[n3];
 
                     this->faces.push_back(triangleMesh);
                     this->texturesCoord.push_back(triangleTexture);
+                    this->normales.push_back(triangleNormale);
                 }
             }
         }
