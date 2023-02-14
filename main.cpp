@@ -7,7 +7,7 @@
 
 Vecteur eye{1, 1, 3};
 Vecteur center{0, 0, 0};
-Vecteur lightDir{0, 0, -1};
+Vecteur lightDir{0, 0, 1};
 Vecteur up{0, 1, 0};
 
 Model monModel{};
@@ -24,17 +24,17 @@ struct GouraudShader : public IShader {
         switch (coord) {
             case 'A':
                 v = monModel.normales[iface].A;
-                varying_intensity.x = std::max(0., v.x * -lightDir.x + v.y * -lightDir.y + v.z * -lightDir.z);
+                varying_intensity.x = std::max(0., v.x * lightDir.x + v.y * lightDir.y + v.z * lightDir.z);
                 v2 = monModel.faces[iface].A;
                 break;
             case 'B':
                 v = monModel.normales[iface].B;
-                varying_intensity.y = std::max(0., v.x * -lightDir.x + v.y * -lightDir.y + v.z * -lightDir.z);
+                varying_intensity.y = std::max(0., v.x * lightDir.x + v.y * lightDir.y + v.z * lightDir.z);
                 v2 = monModel.faces[iface].B;
                 break;
             case 'C':
                 v = monModel.normales[iface].C;
-                varying_intensity.z = std::max(0., v.x * -lightDir.x + v.y * -lightDir.y + v.z * -lightDir.z);
+                varying_intensity.z = std::max(0., v.x * lightDir.x + v.y * lightDir.y + v.z * lightDir.z);
                 v2 = monModel.faces[iface].C;
                 break;
         }
@@ -134,6 +134,7 @@ int main() {
     // Matrice::printMat(projection);
     // Matrice::printMat(modelView);
     // Matrice::printMat(viewPort);
+    // Matrice::printMat(Matrice::invert(viewPort));
     // Matrice::printMat(Matrice::mult(Matrice::mult(viewPort, projection), modelView));
 
     try {
