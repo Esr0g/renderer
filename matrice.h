@@ -7,22 +7,24 @@
 
 #include "geometrie.h"
 
+using Mat = std::vector<std::vector<double>>;
+
 class Matrice {
    public:
-    static std::vector<std::vector<double>> createMatrice(int ligne, int colonne);
-    static std::vector<std::vector<double>> createMatFromVec(Vecteur const &v);
-    static std::vector<std::vector<double>> mult(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2);
-    static std::vector<std::vector<double>> mult(double x, std::vector<std::vector<double>> const &mat1);
-    static std::vector<std::vector<double>> minus(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2);
-    static std::vector<std::vector<double>> plus(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2);
-    static std::vector<std::vector<double>> get_minor(std::vector<std::vector<double>> const &m, const int row, const int col);
-    static std::vector<std::vector<double>> adjugate(std::vector<std::vector<double>> const &m);
-    static std::vector<std::vector<double>> invert_transpose(std::vector<std::vector<double>> const &m);
-    static std::vector<std::vector<double>> transpose(std::vector<std::vector<double>> const &m);
-    static std::vector<std::vector<double>> invert(std::vector<std::vector<double>> const &m);
-    static double det(std::vector<std::vector<double>> const &mat);
-    static void printMat(std::vector<std::vector<double>> const &mat1);
-    static double cofacteur(std::vector<std::vector<double>> const &m, const int row, const int col);
+    static Mat createMatrice(int ligne, int colonne);
+    static Mat createMatFromVec(Vecteur const &v);
+    static Mat mult(Mat const &mat1, Mat const &mat2);
+    static Mat mult(double x, Mat const &mat1);
+    static Mat minus(Mat const &mat1, Mat const &mat2);
+    static Mat plus(Mat const &mat1, Mat const &mat2);
+    static Mat get_minor(Mat const &m, const int row, const int col);
+    static Mat adjugate(Mat const &m);
+    static Mat invert_transpose(Mat const &m);
+    static Mat transpose(Mat const &m);
+    static Mat invert(Mat const &m);
+    static double det(Mat const &mat);
+    static void printMat(Mat const &mat1);
+    static double cofacteur(Mat const &m, const int row, const int col);
 };
 
 #endif

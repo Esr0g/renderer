@@ -58,6 +58,7 @@ void Model::parseObj(std::string const &path) {
                     ligne = ligne.substr(ligne.find(" ") + 1);
                     vec.z = std::stod(ligne.substr(0, ligne.find(" ")));
 
+                    vec.normaliser();
                     vecteursNormales.push_back(vec);
                 } else if (ligne[0] == 'f' && ligne[1] == ' ') {
                     Triangle triangleMesh{};
@@ -109,4 +110,7 @@ void Model::parseObj(std::string const &path) {
 
 int Model::nbFaces() {
     return std::size(this->faces);
+}
+
+void loadNormalMap(std::string const &path) {
 }

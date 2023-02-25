@@ -1,15 +1,15 @@
 #include "matrice.h"
 
-std::vector<std::vector<double>> Matrice::createMatrice(int ligne, int colonne) {
+Mat Matrice::createMatrice(int ligne, int colonne) {
     return std::vector<std::vector<double>>(ligne, std::vector<double>(colonne, 0));
 }
 
-std::vector<std::vector<double>> Matrice::mult(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2) {
+Mat Matrice::mult(Mat const &mat1, Mat const &mat2) {
     if (mat1[0].size() != mat2.size()) {
         throw std::runtime_error("Attention : Le nombre de colones de la première matrice doit être égale au nombre de ligne de la deuxième.");
     }
 
-    std::vector<std::vector<double>> res = Matrice::createMatrice(mat1.size(), mat2[0].size());
+    Mat res = Matrice::createMatrice(mat1.size(), mat2[0].size());
     for (int i1 = 0; i1 < res.size(); i1++) {
         for (int j1 = 0; j1 < res[i1].size(); j1++) {
             double tot = 0;
@@ -23,8 +23,8 @@ std::vector<std::vector<double>> Matrice::mult(std::vector<std::vector<double>> 
     return res;
 }
 
-std::vector<std::vector<double>> Matrice::mult(double x, std::vector<std::vector<double>> const &mat1) {
-    std::vector<std::vector<double>> res = Matrice::createMatrice(mat1.size(), mat1[0].size());
+Mat Matrice::mult(double x, Mat const &mat1) {
+    Mat res = Matrice::createMatrice(mat1.size(), mat1[0].size());
 
     for (int i = 0; i < mat1.size(); i++) {
         for (int j = 0; j < mat1[i].size(); j++) {
@@ -35,7 +35,7 @@ std::vector<std::vector<double>> Matrice::mult(double x, std::vector<std::vector
     return res;
 }
 
-void Matrice::printMat(std::vector<std::vector<double>> const &mat1) {
+void Matrice::printMat(Mat const &mat1) {
     std::string res{};
     for (int i = 0; i < mat1.size(); i++) {
         res += "[";
@@ -53,7 +53,7 @@ void Matrice::printMat(std::vector<std::vector<double>> const &mat1) {
     std::cout << res << std::endl;
 }
 
-std::vector<std::vector<double>> Matrice::createMatFromVec(Vecteur const &v) {
+Mat Matrice::createMatFromVec(Vecteur const &v) {
     auto res = Matrice::createMatrice(3, 1);
     res[0][0] = v.x;
     res[1][0] = v.y;
@@ -62,7 +62,7 @@ std::vector<std::vector<double>> Matrice::createMatFromVec(Vecteur const &v) {
     return res;
 }
 
-std::vector<std::vector<double>> Matrice::minus(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2) {
+Mat Matrice::minus(Mat const &mat1, Mat const &mat2) {
     if (mat1.size() != mat2.size() || mat1[0].size() != mat2[0].size()) {
         throw std::runtime_error("Pour additionner 2 matrice, il faut que celles-ci soient de même taille.");
     }
@@ -78,7 +78,7 @@ std::vector<std::vector<double>> Matrice::minus(std::vector<std::vector<double>>
     return res;
 }
 
-std::vector<std::vector<double>> Matrice::plus(std::vector<std::vector<double>> const &mat1, std::vector<std::vector<double>> const &mat2) {
+Mat Matrice::plus(Mat const &mat1, Mat const &mat2) {
     if (mat1.size() != mat2.size() || mat1[0].size() != mat2[0].size()) {
         throw std::runtime_error("Pour soustraire 2 matrice, il faut que celles-ci soient de même taille.");
     }
@@ -94,7 +94,7 @@ std::vector<std::vector<double>> Matrice::plus(std::vector<std::vector<double>> 
     return res;
 }
 
-double Matrice::det(std::vector<std::vector<double>> const &mat) {
+double Matrice::det(Mat const &mat) {
     if (mat.size() == 4) {
         // ∣ a b c d | | 00 01 02 03 |
         // | e f g h | | 10 11 12 13 |
@@ -144,7 +144,7 @@ double Matrice::det(std::vector<std::vector<double>> const &mat) {
     return 0;
 }
 
-std::vector<std::vector<double>> Matrice::get_minor(std::vector<std::vector<double>> const &m, const int row, const int col) {
+Mat Matrice::get_minor(Mat const &m, const int row, const int col) {
     auto ret = Matrice::createMatrice(m.size() - 1, m[0].size() - 1);
     for (int i = m.size() - 1; i--;) {
         for (int j = m[0].size() - 1; j--; ret[i][j] = m[i < row ? i : i + 1][j < col ? j : j + 1])
@@ -154,11 +154,11 @@ std::vector<std::vector<double>> Matrice::get_minor(std::vector<std::vector<doub
     return ret;
 }
 
-double Matrice::cofacteur(std::vector<std::vector<double>> const &m, const int row, const int col) {
+double Matrice::cofacteur(Mat const &m, const int row, const int col) {
     return ((row + col) % 2 ? -1 : 1) * Matrice::det(Matrice::get_minor(m, row, col));
 }
 
-std::vector<std::vector<double>> Matrice::adjugate(std::vector<std::vector<double>> const &m) {
+Mat Matrice::adjugate(Mat const &m) {
     auto ret = Matrice::createMatrice(m.size(), m[0].size());
 
     for (int i = m.size(); i--;) {
@@ -169,7 +169,7 @@ std::vector<std::vector<double>> Matrice::adjugate(std::vector<std::vector<doubl
     return ret;
 }
 
-std::vector<std::vector<double>> Matrice::invert_transpose(std::vector<std::vector<double>> const &m) {
+Mat Matrice::invert_transpose(Mat const &m) {
     auto ret = Matrice::adjugate(m);
 
     double res{0};
@@ -185,7 +185,7 @@ std::vector<std::vector<double>> Matrice::invert_transpose(std::vector<std::vect
     return ret;
 }
 
-std::vector<std::vector<double>> Matrice::transpose(std::vector<std::vector<double>> const &m) {
+Mat Matrice::transpose(Mat const &m) {
     auto ret = Matrice::createMatrice(m[0].size(), m.size());
 
     for (int i = 0; i < ret.size(); i++) {
@@ -197,6 +197,6 @@ std::vector<std::vector<double>> Matrice::transpose(std::vector<std::vector<doub
     return ret;
 }
 
-std::vector<std::vector<double>> Matrice::invert(std::vector<std::vector<double>> const &m) {
+Mat Matrice::invert(Mat const &m) {
     return Matrice::transpose(Matrice::invert_transpose(m));
 }

@@ -2,6 +2,7 @@
 #define _H_GEOMETRIE
 
 #include <cmath>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -17,6 +18,7 @@ struct Vecteur {
     void set(std::vector<std::vector<double>> const &mat);
     void normaliser();
     double norm();
+    friend std::ostream &operator<<(std::ostream &os, const Vecteur &v);
     static Vecteur cross(Vecteur const &v1, Vecteur const &v2);
 };
 
@@ -34,6 +36,6 @@ struct Triangle {
 
 void ligne(Vecteur const &A, Vecteur const &B, TGAImage &image, TGAColor const &color);
 void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color);
-void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, IShader &shader);
+void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, IShader &shader);
 
 #endif

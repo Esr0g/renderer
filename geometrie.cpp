@@ -66,7 +66,7 @@ void triangle(Triangle const &triangle, TGAImage &image, TGAColor const &color) 
     ligne(triangle.C, triangle.A, image, color);
 }
 
-void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, double zbuffer[], TGAImage &image, TGAImage const &texture, IShader &shader) {
+void trianglePlein(Triangle const &triangle, double zbuffer[], TGAImage &image, IShader &shader) {
     // On parcours le rectangle englobant et on test si chaque pixel appartient au triangle
 
     // On récupềre les coordonées minX minY et maxX maxY du triangle
@@ -106,14 +106,6 @@ void trianglePlein(Triangle const &triangle, Triangle const &coordTexture, doubl
                     if (zbuffer[int(x) + int(y) * WIDTH] < z) {
                         zbuffer[int(x) + int(y) * WIDTH] = z;
 
-                        // Vecteur p{};
-                        // p.x = beta * round(coordTexture.A.x * texture.width()) + gamma * round(coordTexture.B.x * texture.width()) + alpha * round(coordTexture.C.x * texture.width());
-                        // p.y = beta * round(coordTexture.A.y * texture.height()) + gamma * round(coordTexture.B.y * texture.height()) + alpha * round(coordTexture.C.y * texture.height());
-                        // TGAColor color = texture.get(p.x, texture.height() - 1 - p.y);
-                        // color.bgra[0] = round(color.bgra[0] * intensity);
-                        // color.bgra[1] = round(color.bgra[1] * intensity);
-                        // color.bgra[2] = round(color.bgra[2] * intensity);
-                        // image.set(x, y, color);
                         TGAColor color;
                         bool discard = shader.fragment(Vecteur{x, y, z}, Vecteur{beta, gamma, alpha}, color);
                         if (!discard) {
@@ -162,12 +154,6 @@ double Vecteur::norm() {
     return sqrt((this->x * this->x) + (this->y * this->y) + (this->z * this->z));
 }
 
-// Vecteur bboxmin{std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
-// Vecteur bboxmax{-std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity()};
-// Vecteur clamp{WIDTH - 1, HEIGHT - 1};
-
-// bboxmin.x = std::max(0., std::min(bboxmin.x, MIN(triangle.A.x, triangle.B.x, triangle.C.x)));
-// bboxmin.y = std::max(0., std::min(bboxmin.x, MIN(triangle.A.y, triangle.B.y, triangle.C.y)));
-
-// bboxmax.x = std::min(clamp.x, std::max(bboxmax.x, MAX(triangle.A.x, triangle.B.x, triangle.C.x)));
-// bboxmax.y = std::min(clamp.y, std::max(bboxmax.y, MAX(triangle.A.y, triangle.B.y, triangle.C.y)));
+std::ostream &operator<<(std::ostream &os, const Vecteur &v) {
+    return os << "{" << v.x << "," << v.y << "," << v.z << "}";
+}
